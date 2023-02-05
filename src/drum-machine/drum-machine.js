@@ -1,5 +1,5 @@
-import React from "react";
 import ReactDOM from "react-dom";
+import { useEffect, React } from "react";
 
 const drumPads = [
   {
@@ -58,15 +58,46 @@ const drumPads = [
   },
 ];
 
+const idDisplay = "display";
+
 export function DrumDisplay() {
-  return <div id="display">Display</div>;
+  return <div id={idDisplay}>Display</div>;
 }
 
 export function DrumPad() {
-  const handleClick = (url) => {
-    const audio = new Audio(url);
-    audio.loop = false;
+  const playAudio = (drumPad) => {
+    const audio = document.getElementById(drumPad.id);
     audio.play();
+
+    const display = document.getElementById(idDisplay);
+    display.innerText = drumPad.displayText;
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (ev) => {
+      let drumPad = drumPads.find((el) => el.keyCode === ev.keyCode);
+      if (drumPad != undefined) {
+        ev.preventDefault();
+        playAudio(drumPad);
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
+
+  const handleClick = (ev, id) => {
+    const audio = ev.currentTarget.firstElementChild; // new Audio(url);
+    audio.play();
+
+    let drumPad = drumPads.find((el) => el.id === id);
+    if (drumPad != undefined) {
+      const display = document.getElementById(idDisplay);
+      display.innerText = drumPad.displayText;
+    }
   };
 
   return (
@@ -76,7 +107,7 @@ export function DrumPad() {
         <div
           id={ix.toString()}
           className="drum-pad"
-          onClick={() => handleClick(el.url)}
+          onClick={(ev) => handleClick(ev, el.id)}
         >
           {el.id}
           <audio id={el.id} className="clip" src={el.url} />
