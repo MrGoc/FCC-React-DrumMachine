@@ -4,7 +4,7 @@ import { DrumDisplay, DrumPad } from "./drum-machine/drum-machine";
 
 function App() {
   return (
-    <div id="drum-machine" className="App">
+    <div id="drum-machine">
       <DrumPad />
       <DrumDisplay />
     </div>

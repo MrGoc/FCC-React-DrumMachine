@@ -77,15 +77,28 @@ export function DrumPad() {
     const handleKeyDown = (ev) => {
       let drumPad = drumPads.find((el) => el.keyCode === ev.keyCode);
       if (drumPad != undefined) {
+        /*
+        ev.currentTarget.classList.toggle(
+          "drum-pad-clicked",
+          "drum-pad-normal"
+        );
+        */
         ev.preventDefault();
         playAudio(drumPad);
       }
     };
+    /*
+    const handleKeyUp = (ev) => {
+      ev.currentTarget.classList.toggle("drum-pad-normal", "drum-pad-clicked");
+    };
+    */
 
     document.addEventListener("keydown", handleKeyDown);
+    //document.addEventListener("keyup", handleKeyUp);
 
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
+      //document.removeEventListener("keyup", handleKeyUp);
     };
   }, []);
 
@@ -102,11 +115,10 @@ export function DrumPad() {
 
   return (
     <div id="drum-pad">
-      DrumPad
       {drumPads.map((el, ix) => (
         <div
           id={ix.toString()}
-          className="drum-pad"
+          className="drum-pad drum-pad-normal"
           onClick={(ev) => handleClick(ev, el.id)}
         >
           {el.id}
