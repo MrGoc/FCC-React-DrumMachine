@@ -61,7 +61,7 @@ const drumPads = [
 const idDisplay = "display";
 
 export function DrumDisplay() {
-  return <div id={idDisplay}>Display</div>;
+  return <div id={idDisplay}></div>;
 }
 
 export function DrumPad() {
@@ -77,28 +77,29 @@ export function DrumPad() {
     const handleKeyDown = (ev) => {
       let drumPad = drumPads.find((el) => el.keyCode === ev.keyCode);
       if (drumPad != undefined) {
-        /*
-        ev.currentTarget.classList.toggle(
-          "drum-pad-clicked",
-          "drum-pad-normal"
-        );
-        */
+        const drumPadParent = document.getElementById(drumPad.id).parentElement;
+
+        drumPadParent.classList.replace("drum-pad-normal", "drum-pad-clicked");
+
         ev.preventDefault();
         playAudio(drumPad);
       }
     };
-    /*
+
     const handleKeyUp = (ev) => {
-      ev.currentTarget.classList.toggle("drum-pad-normal", "drum-pad-clicked");
+      let drumPad = drumPads.find((el) => el.keyCode === ev.keyCode);
+      if (drumPad != undefined) {
+        const drumPadParent = document.getElementById(drumPad.id).parentElement;
+        drumPadParent.classList.replace("drum-pad-clicked", "drum-pad-normal");
+      }
     };
-    */
 
     document.addEventListener("keydown", handleKeyDown);
-    //document.addEventListener("keyup", handleKeyUp);
+    document.addEventListener("keyup", handleKeyUp);
 
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
-      //document.removeEventListener("keyup", handleKeyUp);
+      document.removeEventListener("keyup", handleKeyUp);
     };
   }, []);
 
@@ -113,12 +114,22 @@ export function DrumPad() {
     }
   };
 
+  const handleMouseDown = (ev) => {
+    ev.currentTarget.classList.replace("drum-pad-normal", "drum-pad-clicked");
+  };
+
+  const handleMouseUp = (ev) => {
+    ev.currentTarget.classList.replace("drum-pad-clicked", "drum-pad-normal");
+  };
+
   return (
     <div id="drum-pad">
       {drumPads.map((el, ix) => (
         <div
           id={ix.toString()}
           className="drum-pad drum-pad-normal"
+          onMouseDown={(ev) => handleMouseDown(ev)}
+          onMouseUp={(ev) => handleMouseUp(ev)}
           onClick={(ev) => handleClick(ev, el.id)}
         >
           {el.id}
